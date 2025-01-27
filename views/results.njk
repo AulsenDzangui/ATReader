@@ -1,0 +1,158 @@
+{% extends "./layout.njk" %}
+{% import "./macros.njk" as macros %}
+
+{% block childContent %}
+    <main class="flex flex-col items-center justify-center space-y-10">
+        <div class="w-[900px] text-center flex flex-col space-y-6">
+            {{ macros.title1("Résultats de l'analyse de vos fichiers") }}
+            {{ macros.title2("Attention ! Certaines informations peuvent avoir été modifiées par votre solution logicielle au moment de la prise en charge du versement des archives.") }}
+            <div class="flex items-center justify-center mt-10 space-x-4">
+                <button onclick="window.location.href = '/'" class="tooltip" data-title="Nouvelle analyse">
+                    <img class="h-10 w-10" src="./images/back_arrow_icon.svg" alt="Go back icon"/>
+                </button>
+                {# <button onclick="window.location.href = '/historique'" class="tooltip" data-title="Historique">
+                    <img class="h-8 w-8" src="./images/history-clock-button.svg" alt="History icon"/>
+                </button> #}
+                <form action="/download-csv" method="GET">
+                    {% if mixedDataArray.length > 0 %}
+                        <button type="submit" class="bg-secondary p-2 rounded-md shadow-md hover:bg-secondary-light transition duration-200 text-2xl">Exporter en CSV</button>
+                    {% else %}
+                        <button type="submit" class="bg-secondary p-2 rounded-md shadow-md hover:bg-secondary-light transition duration-200 text-2xl disabled:cursor-not-allowed" disabled>Exporter en CSV</button>
+                    {% endif %}
+                </form>
+                <form action="/reset" method="post" class="">
+                    <button class="tooltip bg-accent rounded-full border-none p-2" data-title="Effacer vos données maintenant">
+                    <img class="h-5 w-5" src="./images/delete.svg" alt="Trash icon"/>
+                </button>
+                </form>
+            </div>
+        </div>
+        {# <!-- Historique -->
+        <div class="flex space-y-6 flex-wrap w-full justify-center 2xl:items-start 2xl:space-x-4 2xl:space-y-0">
+              <div class="flex items-center">
+                    {{ macros.title3("Historique") }}
+                </div>
+            <ul></ul>
+        </div> #}
+        <div class="flex space-y-6 flex-wrap w-full justify-center 2xl:items-start 2xl:space-x-4 2xl:space-y-0">
+            <!-- Informations générales -->
+            <div class="2xl:w-[900px]">
+                <div class="flex items-center">
+                    {{ macros.title3("Informations générales") }}
+                    {{ macros.copyTextButton("general-infos-content") }}
+                </div>
+                <div id="general-infos-content" class="shadow-md rounded-md p-4 bg-white w-[900px] border border-primary">
+                    <ul class="list-disc pl-5 space-y-2">
+                        {{ macros.listItem("Date d’émission de l’ATR", generalInfos.Date) }}
+                        {{ macros.listItem("Identifiant du message (ATR)", generalInfos.MessageIdentifier, isAnId = true) }}
+                        {{ macros.listItem("Identifiant du message de demande (Bordereau)", generalInfos.MessageRequestIdentifier, isAnId = true) }}
+                        {{ macros.listItem("Accord de service", generalInfos.ArchivalAgreement, isAnId = true) }}
+                        {{ macros.listItem("Statut final de l’entrée", generalInfos.ReplyCode) }}
+                        {{ macros.listItem("Date de prise en charge effective", generalInfos.GrantDate) }}
+                        {{ macros.listItem("Identifiant du service d'archives", generalInfos.ArchivalAgency, isAnId = true) }}
+                        {{ macros.listItem("Identifiant du service versant", generalInfos.TransferringAgency, isAnId = true) }}
+                    </ul>
+                    {{ macros.title4("Journal de bord (LogBook)") }}
+                    {% if generalInfos.LogBook.length > 0 %}
+                        {{ macros.logBookEventsList(generalInfos.LogBook, false) }}
+                    {% else %}
+                        {{ macros.noData() }}
+                    {% endif %}
+                    {{ macros.title4("Informations sur les fichiers analysés") }}
+                    <ul class="list-disc pl-5 space-y-2">
+                        {{ macros.listItem("Bordereau de versement", filesInfos.sipOriginalname) }}
+                        {{ macros.listItem("Accusé de réception", filesInfos.atrOriginalname) }}
+                    </ul>
+                </div>
+            </div>
+            <!-- Tableau des unités archivistiques -->
+            <div class="2xl:w-[900px]">
+                <div class="flex items-center">
+                    {{ macros.title3("Liste des unités archivistiques") }}
+                    {% if mixedDataArray.length > 0 %}
+                        {{ macros.copyTextButton("subjectTable") }}
+                    {% endif %}
+                </div>
+                {% if mixedDataArray.length > 0 %}
+                    <div class="w3-responsive custom-scrollbar">
+                        <table id="subjectTable" class="w3-table w3-bordered w3-centered table-auto overflow-x-auto mb-4 border-collapse border-spacing-0 border p-4 shadow-md bg-white w-[900px]">
+                            <thead class="border border-primary">
+                                <tr class="bg-primary">
+                                    <th class="align-middle text-left py-2 px-2 text-white">ID</th>
+                                    <th class="align-middle text-left py-2 px-2 text-white w-48">Titre</th>
+                                    <th class="align-middle text-left py-2 px-2 text-white">Niveau de description</th>
+                                    <th class="align-middle text-left py-2 px-2 text-white">Identifiant système</th>
+                                    <th class="align-middle text-left py-2 px-2 text-white">Statut</th>
+                                    <th class="align-middle text-left py-2 px-2 text-white">Détails</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in mixedDataArray %}
+                                    {% set eventsIsEmpty = item.events.length === 0 %}
+                                    {% set isWarning = item
+                                        .events[0]
+                                        .Outcome === "WARNING" or(item.events[1] is defined and item.events[1].Outcome === "WARNING") %}
+                                    {% set isKO = item
+                                        .events[0]
+                                        .Outcome === "KO" or(item.events[1] is defined and item.events[1].Outcome === "KO") %}
+
+                                    <tr 
+                                    {% if isWarning %}
+                                        class="bg-secondary"
+                                        {% endif %}
+                                        {% if isKO %}
+                                            class="bg-accent"
+                                    {% endif %}
+                                    >
+                                        {{ macros.tabletdSimple(item.id) }}
+                                        {{ macros.tabletdSimple(item.title) }}
+                                        {{ macros.tabletdSimple(item.level) }}
+                                        <td class="item-info flex items-center align-middle text-left px-2 py-2 w-[300px] h-12">
+                                            <span id="{{item.systemId}}">{{ item.systemId }}</span>
+                                           {{ macros.copyTextButtonMini(item.systemId) }}
+                                        </td>
+                                        {% if item.isItem %}
+                                            <td class="align-middle text-left px-2 py-2">{{ item.events[0].Outcome if not eventsIsEmpty else "OK" }}</td>
+                                        {% else %}
+                                            {{ macros.tabletdSimple("") }}
+                                        {% endif %}
+                                        {% if item.isItem %}
+                                            <td class="align-middle text-left px-2 py-2">
+                                                <button onclick="renderObject('{{item.objectId}}', '{{item.id}}')" class="py-1 px-2 rounded tooltip h-fit w-fit" data-title="Voir détails">
+                                                    <img class="h-4 w-4" src="./images/search.svg" alt="Loupe icon"/>
+                                                </button>
+                                            </td>
+                                        {% else %}
+                                            {{ macros.tabletdSimple("") }}
+                                        {% endif %}
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="bg-white w-[900px]">
+                        <div class="w3-responsive custom-scrollbar">
+                            <table id="subjectTable" class="table-auto overflow-x-auto mb-4 border-collapse border-spacing-0 border p-4 shadow-md bg-white w-[900px]">
+                                <thead class="border border-primary">
+                                    <tr>
+                                        <th class="align-middle text-left py-2 px-2 bg-primary text-white">ID</th>
+                                        <th class="align-middle text-left py-2 px-2 bg-primary text-white">Titre</th>
+                                        <th class="align-middle text-left py-2 px-2 bg-primary text-white">Niveau de description</th>
+                                        <th class="align-middle text-left py-2 px-2 bg-primary text-white">Identifiant système</th>
+                                        <th class="align-middle text-left py-2 px-2 bg-primary text-white">Résultat</th>
+                                        <th class="align-middle text-left py-2 px-2 bg-primary text-white">Détails</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                        <div class="pb-2 pl-2">
+                            {{ macros.noData() }}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+    <div id="modals" class="w3-modal" style="margin-top: 0px !important; margin-bottom: 0px !important;"></div>
+{% endblock %}

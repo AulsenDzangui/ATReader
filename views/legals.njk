@@ -1,0 +1,44 @@
+{% extends "./layout.njk" %}
+{% import "./macros.njk" as macros %}
+
+{% block childContent %}
+<main class="flex flex-col items-center">
+    <div class="p-6 w-[900px] text-center">
+        {{ macros.title1("Mentions légales et Conditions d'utilisation") }}
+    </div>
+    <div class="bg-primary shadow-md rounded-lg p-6 w-[700px] text-xl">
+        
+        <h3 class="text-xl text-white font-semibold">Mentions Légales</h3>
+        <p class="text-white mt-2">
+            Le site <strong>www.atreader.onrender.com</strong> (ci-après "le Site") est édité par <strong>Aulsen Dzangui</strong>.
+        </p>
+        <p class="text-white mt-2">
+            Le Site est hébergé par la société <strong>Render Services, Inc.</strong>, située au 525 Brannan Street Ste 300, San Francisco, CA 94107. 
+            Vous pouvez les contacter par téléphone au <strong>+14158304762</strong>.
+        </p>
+
+        <h3 class="text-xl text-white font-semibold mt-4">Conditions d'utilisation</h3>
+        
+        <h4 class="text-lg text-white font-semibold mt-2">Clause de non-responsabilité</h4>
+        <p class="text-white mt-2">
+            Les fonctionnalités et outils proposés sur ce site sont conçus pour vous aider dans vos activités. Bien que nous nous efforçons de garantir leur précision et leur efficacité, nous ne pouvons pas garantir l'exhaustivité, l'exactitude ou la fiabilité des services offerts. L'utilisation de ces outils se fait à vos propres risques.
+        </p>
+
+        <h4 class="text-lg text-white font-semibold mt-2">Propriété intellectuelle</h4>
+        <p class="text-white mt-2">
+            Ce site et son contenu original sont la propriété exclusive d'Aulsen Dzangui. Toute reproduction, distribution ou représentation de ce site, en totalité ou en partie, sans autorisation écrite préalable d'Aulsen Dzangui est interdite.
+        </p>
+
+        <h4 class="text-lg text-white font-semibold mt-2">Données personnelles</h4>
+        <p class="text-white mt-2">
+            Nous attachons une grande importance à la protection de vos données personnelles. Les fichiers que vous téléchargez pour analyse sont supprimés dans les secondes qui suivent l'obtention et l'affichage des résultats. De plus, les données sont stockées temporairement dans une session qui expire au bout d'une heure. Aucune donnée personnelle n'est conservée au-delà de cette période, garantissant ainsi votre confidentialité et la sécurité de vos informations.
+        </p>
+
+        <h3 class="text-xl text-white font-semibold mt-4">Contact</h3>
+        <p class="text-white mt-2">
+            Pour toute information ou question, vous pouvez nous contacter par email à l'adresse suivante : 
+            <a href="mailto:aulsen.dzangui_dibangoye[arobase]outlook.com">aulsen.dzangui_dibangoye[arobase]outlook.com</a>
+        </p>
+    </div>
+</main>
+{% endblock %}

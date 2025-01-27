@@ -1,0 +1,136 @@
+{% macro listItem(key, value, isAnId = false) %}
+{% if value and isAnId %}
+<li class="item-info flex items-center h-6 w-fit space-x-1">
+    {{ keyValueOnly(key, value) }}
+    {{ copyTextButtonMini(value) }}
+</li>
+{% else %}
+<li class="flex items-center h-6 w-fit space-x-1">
+    {{ keyValueOnly(key, value) }}
+</li>
+{% endif %}
+
+{% endmacro %}
+
+{% macro keyValueOnly(key, value) %}
+<strong>{{key}} : </strong>
+{% if value %}
+<span id="{{value}}" class="{{" bg-orange-300" if value==="WARNING" or value==="Test WARNING" }}{{"bg-red-300" if
+    value==="KO" or value==="Test KO" }}{{"bg-green-300" if value==="OK" or value==="Test OK" }}">{{value}}</span>
+{% else %}
+<span class="italic">Donnée absente</span>
+{% endif %}
+{% endmacro %}
+
+{% macro paragraph(key, value) %}
+<p class="overflow-auto custom-scrollbar">
+    {{ keyValueOnly(key, value) }}
+</p>
+{% endmacro %}
+
+{% macro tabletdOnClick(value) %}
+<td class="align-middle text-left px-2 py-2">{{ value }}</td>
+{% endmacro %}
+
+{% macro tabletdSimple(value) %}
+<td class="align-middle text-left px-2 py-2">{{ value }}</td>
+{% endmacro %}
+
+{% macro logBookEventsList(logBook, isForModal) %}
+{% set eventsList = logBook %}
+<ul class="list-disc pl-5 space-y-3">
+    {% set eventsIsEmpty = eventsList.length === 0 %}
+    {% for event in eventsList %}
+    {% if event.EventType !== undefined %}
+    {% if not eventsIsEmpty %}
+    <li class="overflow-auto custom-scrollbar">
+        {{ keyValueOnly("Type d'évènement", event.EventType) }}<br>
+        {{ keyValueOnly("Résultat de l'événement ", event.Outcome) }}<br>
+        {{ keyValueOnly("Message complet de description du résultat", event.OutcomeDetailMessage) }}<br>
+        {% if event.EventDetailData %}
+        {% if isForModal %}
+        <strong>Message technique détaillant l'événement :</strong><br>
+        <code id="code" class="bg-[#f5f5fa] text-text w-[750px] h-fit">
+                                    {{ event.EventDetailData | safe }}
+                                </code>
+        {% else %}
+        <strong>Message technique détaillant l'événement :</strong><br>
+        <div class="item-info flex justify-start items-center">
+            <code id="code" class="bg-[#f5f5fa] text-text w-[750px] h-fit">
+                                        {{ event.EventDetailData | safe }}
+                                    </code>
+            <button style="display:none;"
+                onclick="copyToClipboard(document.getElementById('{{code}}').innerText); changeImageSource(this);"
+                class="py-2 px-4 copy-text-button hover:bg-gray-200 rounded-md ml-1 h-fit tooltip"
+                data-title="Copier la valeur">
+                <img class="h-4 w-4 copy-text-icon" src="./images/copy_icon.svg" alt="Copy text icon" />
+            </button>
+        </div>
+        {% endif %}
+        {% endif %}
+    </li>
+    {% else %}
+    <p>
+        <i>Rien à signaler</i>
+    </p>
+    {% endif %}
+    {% endif %}
+    {% if not loop.last %}
+    <hr> {% endif %}
+    {% endfor %}
+</ul>
+{% endmacro %}
+
+{% macro title1(text) %}
+<h1 id="titre" class="font-bold text-4xl leading-10 my-4">{{text}}</h1>
+{% endmacro %}
+
+{% macro title2(text) %}
+<h2 class="text-2xl leading-8">{{text}}</h2>
+{% endmacro %}
+
+{% macro title3(text) %}
+<h3 class="text-xl font-bold mb-2">{{text}}</h3>
+{% endmacro %}
+
+{% macro title4(text) %}
+<h4 class="text-lg font-bold mt-2 mb-2">{{text}}</h4>
+{% endmacro %}
+
+{% macro noData() %}
+<p class="flex space-x-2 items-center">
+    <img class="h-5 w-5" src="./images/caution.svg" alt="Attention" />
+    <i>Données indisponibles</i>
+</p>
+{% endmacro %}
+
+{% macro error(error) %}
+{% if error != null %}
+<div>
+    <p class="text-base text-center text-accent">{{ error }}</p>
+</div>
+{% endif %}
+{% endmacro %}
+
+{% macro notification(notification) %}
+{% if notification != null %}
+<div>
+    <p class="text-base text-center text-green-500">{{ notification }}</p>
+</div>
+{% endif %}
+{% endmacro %}
+
+{% macro copyTextButton(elementId) %}
+<button onclick="copyToClipboard(document.getElementById('{{elementId}}').innerText); changeImageSource(this);"
+    class="py-2 px-4 copy-text-button tooltip" data-title="Copier les données">
+    <img class="h-6 w-6 copy-text-icon" src="./images/copy_icon.svg" alt="Copy text icon" />
+</button>
+{% endmacro %}
+
+{% macro copyTextButtonMini(elementId) %}
+<button style="display:none;"
+    onclick="copyToClipboard(document.getElementById('{{elementId}}').innerText); changeImageSource(this);"
+    class="p-2 copy-text-button hover:bg-gray-200 rounded-md ml-1 tooltip" data-title="Copier la valeur">
+    <img class="h-4 w-4 copy-text-icon" src="./images/copy_icon.svg" alt="Copy text icon" />
+</button>
+{% endmacro %}

@@ -1,0 +1,25 @@
+
+{% block parent %}
+    <!DOCTYPE html>
+    <html lang="fr">
+        {% include './head.njk' %}
+        <body class="bg-background archivo-narrow-reader h-screen flex flex-col space-y-6">
+            {% include './header.njk' %}
+
+            {# Main element only #}
+            {% block childContent %}{% endblock %}
+
+            {% include './footer.njk' %}
+            {% include './scripts.njk' %}
+             <style>
+                .drop-area {
+                    cursor: pointer;
+                }
+                .drop-area:hover {
+                    border-color: #7c3aed;
+                    /* Change border color on hover */
+                }
+            </style>
+        </body>
+    </html>
+{% endblock %}

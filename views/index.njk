@@ -1,0 +1,24 @@
+{% extends "./layout.njk" %}
+{% import "./macros.njk" as macros %}
+
+{% block childContent %}
+    <main class="flex flex-col items-center">
+        <div class="p-6 w-[900px] text-center">
+            {{ macros.title1('Analyser votre ArchiveTransferReply (ATR)') }}
+            <h2 class="text-2xl leading-8">Simplifier la lecture et l'analyse d'un accusé de réception de transfert d'archives en SEDA 2.1 et SEDA 2.2</h2>
+        </div>
+        <div class="bg-primary shadow-md rounded-lg p-6 w-[700px]">
+            <form action="/analyse" method="post" enctype="multipart/form-data" class="space-y-4 text-xl" id="uploadForm">
+                <label class="block text-base text-white font-semibold text-center">Pour une analyse efficace de votre ATR, chargez également le bordereau de versement (manifest.xml) au format SEDA 2.1 ou SEDA 2.2.</label>
+                <div class="drop-area" id="fileDropArea">
+                    <input type="file" id="files" name="files[]" accept=".xml" required multiple class="hidden">
+                    <div id="invitation" class="h-20 w-full border border-background rounded-md shadow-sm p-4 text-center text-white flex flex-col justify-center">Cliquez pour sélectionner vos fichiers</div>
+                </div>
+                <ul id="fileList" class="mt-2 text-base text-white pl-5 space-y-2"></ul>
+                <button type="submit" class="w-full py-2 bg-secondary text-text font-semibold rounded-md shadow-md shadow-primary hover:bg-secondary-light transition duration-200">Analyser</button>
+                {{ macros.error(messages.error) }}
+                {{ macros.notification(messages.notification) }}
+            </form>
+        </div>
+    </main>
+{% endblock %}

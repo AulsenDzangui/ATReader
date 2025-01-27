@@ -1,0 +1,24 @@
+{% extends "./layout.njk" %}
+{% import "./macros.njk" as macros %}
+
+{% block childContent %}
+<main class="flex flex-col items-center">
+    <div class="p-6 w-[900px] text-center">
+        {{ macros.title1("À Propos d'ATReader") }}
+    </div>
+    <div class="bg-primary shadow-md rounded-lg p-6 w-[700px] text-xl">
+        <p class="text-white mt-2">
+            ATReader est un outil destiné à simplifier l'analyse des accusés de réception, également appelés Archive Transfer Reply (ATR), au format SEDA 2.1 et 2.2. Il optimise l'identification des objets à l'origine des avertissements ou des rejets lors d'un versement, fournissant ainsi une vue d'ensemble des erreurs potentielles. Il est principalement testé sur la solution logicielle Vitam.
+        </p>
+        <p class="text-white mt-2">
+            L'outil extrait des informations essentielles sur les unités archivistiques, qu'elles soient en statut OK, KO ou WARNING, et permet un accès direct à ces unités en récupérant leur identifiant système.
+        </p>
+        <p class="text-white mt-2">
+            Vous avez la possibilité d'utiliser ATReader en local sur un poste et à partir de l'adresse provisoire suivante <a href="https://atreader.onrender.com">https://atreader.onrender.com</a>. Pour une utilisation en local accéder à la page <a href="https://github.com/AulsenDzangui/ATReader">Github du projet</a> et suivre les instructions.
+        </p>
+        <p class="text-white mt-2">
+            En résumé, ATReader est un outil utile pour récupérer des informations importantes, identifier rapidement les erreurs liées aux unités archivistiques et faciliter l'analyse des ATR en lien avec les bordereaux de versement.
+        </p>
+    </div>
+</main>
+{% endblock %}
